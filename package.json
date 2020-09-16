@@ -1,0 +1,20 @@
+{
+  "name": "api-compare",
+  "version": "0.0.1",
+  "description": "Compare APIs",
+  "main": "compare.js",
+  "dependencies": {
+    "node-fetch": "^2.6.0",
+    "diff-json": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node compare.js",
+    "test": "node compare.js"
+  },
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "keywords": []
+}
