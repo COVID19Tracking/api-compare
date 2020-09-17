@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { DateTime } = require('luxon');
-const metadataCompare = require('./compare.js')
+const metadataCompare = require('./compareStatesInfo.js')
+const statesDailyCompare = require('./compareStatesDaily.js')
 const { WebClient } = require('@slack/web-api');
 
 // compare state metadata
@@ -11,8 +12,10 @@ metadataCompare.runCompare(metadataCompareResults => {
     let statesDailyCompareResults = Compare(results)
     statesDailyOutput += `States daily comparison:  ${statesDailyCompareResults.length} differences found\n`
 
-    const output = metadataCompareResults + "\n" + statesDailyOutput;
-    postToSlack(output)
+    statesDailyCompare.runCompare(sd2CompareResults => {
+      const output = metadataCompareResults + "\n" + statesDailyOutput + "\n" + sd2CompareResults;
+      postToSlack(output)
+    })
   })
 })
 
