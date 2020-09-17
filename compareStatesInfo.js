@@ -3,7 +3,7 @@ const INTERNAL_API_BASE = "https://internalapi.covidtracking.com/api/v1/"
 const ENDPOINTS = [
   {name: "States Metadata",
    pubapi: PUBLIC_API_BASE+"states/info.json",
-   internalapi: INTERNAL_API_BASE+"public/states/info",
+   internalapi: "https://github.com/COVID19Tracking/covid-public-api/blob/test/internal-endpoints/v1/states/info.json?raw=true",
    ignorekeys: new Set(["pui"]),
    embeddedkey: "state"}
 ]
@@ -50,6 +50,12 @@ const runCompare = async function(callback) {
               }
               // filter out fields that are intentionally blank in the internal API and are empty strings
               if (subChange.type == "remove" && subChange.value == "") {
+                return false
+              }
+
+              if (subChange.type == "add"
+                && new Set(["covid19SiteSecondary", "covid19SiteTertiary", "twitter", "notes"]).has(subChange.key)
+                && subChange.value == null) {
                 return false
               }
 
