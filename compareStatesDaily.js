@@ -48,6 +48,7 @@ const runCompare = async function(callback) {
       if (diffs !== undefined && diffs.length > 0) {
         diffs.forEach(diff => {
           diff.changes.forEach((change, index) => {
+            if (change.changes === undefined) return
             change.changes = change.changes.filter(subChange => {
               // filter out ignored keys
               if (endpoint.ignorekeys.has(subChange.key)) {

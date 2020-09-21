@@ -4,20 +4,35 @@ const metadataCompare = require('./compareStatesInfo.js')
 const statesDailyCompare = require('./compareStatesDaily.js')
 const { WebClient } = require('@slack/web-api');
 
-// compare state metadata
-metadataCompare.runCompare(metadataCompareResults => {
-  // compare states daily
-  let statesDailyOutput = "Comparing states daily: https://internal.covidtracking.com/compare\n"
-  fetchStatesDailyCompare().then(results =>{
-    let statesDailyCompareResults = Compare(results)
-    statesDailyOutput += `States daily comparison:  ${statesDailyCompareResults.length} differences found\n`
+// compare public sheets
+fetchPublicSheetCompare().then(pubSheetResults => {
+  let publicSheetOutput = `Public sheet comparison: ${pubSheetResults} (expected 137)\n`
 
-    statesDailyCompare.runCompare(sd2CompareResults => {
-      const output = metadataCompareResults + "\n" + statesDailyOutput + "\n" + sd2CompareResults;
-      postToSlack(output)
+  // compare state metadata
+  metadataCompare.runCompare(metadataCompareResults => {
+    // compare states daily
+    let statesDailyOutput = "Comparing states daily: https://internal.covidtracking.com/compare\n"
+    fetchStatesDailyCompare().then(results =>{
+      let statesDailyCompareResults = Compare(results)
+      statesDailyOutput += `States daily comparison:  ${statesDailyCompareResults.length} differences found\n`
+
+      statesDailyCompare.runCompare(sd2CompareResults => {
+        const output = publicSheetOutput + "\n" + metadataCompareResults + "\n" + statesDailyOutput + "\n" + sd2CompareResults.substring(0,7000);
+        postToSlack(output)
+      })
     })
   })
 })
+
+
+async function fetchPublicSheetCompare() {
+  const sheetCompare = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vTnhZb977UtXfzJbaQsy4Hhq37IqV1NjLEuFljgMCuI1Ep9CNCXhnluaplc704j_uQt22wqw7nlufJ8/pub?gid=992884448&single=true&output=csv")
+  if (!sheetCompare.ok) {
+    throw new Error(`HTTP error! status: ${sheetCompare.status}`);
+  }
+  return sheetCompare.text()
+}
+
 
 async function fetchStatesDailyCompare() {
   let pubApi = await fetch("https://api.covidtracking.com/v1/states/daily.json")
@@ -94,9 +109,13 @@ const Compare = ({ preview, current }) => {
 }
 
 function postToSlack(message) {
+  console.log(message)
   const web = new WebClient(process.env.SLACK_TOKEN);
-  web.chat.postMessage({
-    channel: process.env.SLACK_CHANNEL,
-    text: message
+
+  const result = web.files.upload({
+    channels: process.env.SLACK_CHANNEL,
+    file: Buffer.from(message, 'utf-8')
+  }).then(result => {
+    console.log(result)
   })
 }
