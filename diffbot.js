@@ -114,7 +114,8 @@ function postToSlack(message) {
 
   const result = web.files.upload({
     channels: process.env.SLACK_CHANNEL,
-    file: Buffer.from(message, 'utf-8')
+    file: Buffer.from(message, 'utf-8'),
+    filetype: 'text'
   }).then(result => {
     console.log(result)
   })
