@@ -9,7 +9,7 @@ const ENDPOINTS = [
     {name: "States Daily",
    pubapi: PUBLIC_API_BASE+"states/daily.json",
    internalapi: "https://github.com/COVID19Tracking/covid-public-api/blob/test/internal-endpoints/v1/states/daily.json?raw=true",
-   ignorekeys: new Set(["hash"])}
+   ignorekeys: new Set(["hash", "totalTestResultsSource"])}
 ]
 
 const fetch = require('node-fetch');
@@ -37,7 +37,7 @@ const runCompare = async function(callback) {
   log('Running API comparison');
   ENDPOINTS.forEach(endpoint => {
     log("Comparing " + endpoint.name)
-    log("Ignoring intentional differences in fields: ", endpoint.ignorekeys)
+    log("Ignoring intentional differences in fields: "+ JSON.stringify(Array.from(endpoint.ignorekeys)))
     const promises = [fetchEndpoint(endpoint.pubapi), fetchEndpoint(endpoint.internalapi)]
     Promise.all(promises).then(results => {
       const pubapi = {children: results[0]};

@@ -33,7 +33,7 @@ const runCompare = async function(callback) {
   log('Running API comparison');
   ENDPOINTS.forEach(endpoint => {
     log("Comparing " + endpoint.name)
-    log("Ignoring intentional differences in fields: ", endpoint.ignorekeys)
+    log("Ignoring intentional differences in fields: "+ JSON.stringify(Array.from(endpoint.ignorekeys)))
     const promises = [fetchEndpoint(endpoint.pubapi), fetchEndpoint(endpoint.internalapi)]
     Promise.all(promises).then(results => {
       const pubapi = {children: results[0]};
