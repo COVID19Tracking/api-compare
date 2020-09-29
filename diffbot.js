@@ -6,7 +6,7 @@ const { WebClient } = require('@slack/web-api');
 
 // compare public sheets
 fetchPublicSheetCompare().then(pubSheetResults => {
-  let publicSheetOutput = `Public sheet comparison: ${pubSheetResults} (expected 130)\n`
+  let publicSheetOutput = `Public sheet comparison: ${pubSheetResults}\n`
 
   // compare state metadata
   metadataCompare.runCompare(metadataCompareResults => {
