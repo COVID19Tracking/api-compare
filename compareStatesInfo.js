@@ -54,7 +54,7 @@ const runCompare = async function(callback) {
               }
 
               if (subChange.type == "add"
-                && new Set(["covid19SiteSecondary", "covid19SiteTertiary", "twitter", "notes"]).has(subChange.key)
+                && new Set(["covid19SiteSecondary", "covid19SiteTertiary", "covid19SiteQuaternary", "covid19SiteQuinary", "twitter", "notes"]).has(subChange.key)
                 && subChange.value == null) {
                 return false
               }
