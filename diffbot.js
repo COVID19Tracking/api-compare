@@ -14,7 +14,7 @@ fetchPublicSheetCompare().then(pubSheetResults => {
     let statesDailyOutput = "Comparing states daily: https://internal.covidtracking.com/compare\n"
     fetchStatesDailyCompare().then(results =>{
       let statesDailyCompareResults = Compare(results)
-      statesDailyOutput += `States daily comparison:  ${statesDailyCompareResults.length} differences found\n`
+      statesDailyOutput += `States daily comparison (excluding deprecated totalTestResultsSource):  ${statesDailyCompareResults.length} differences found\n`
 
       statesDailyCompare.runCompare(sd2CompareResults => {
         const output = publicSheetOutput + "\n" + metadataCompareResults + "\n" + statesDailyOutput + "\n" + sd2CompareResults.substring(0,7000);
@@ -78,7 +78,7 @@ const Compare = ({ preview, current }) => {
       const merged = {}
       Object.keys(row).forEach((key) => {
         merged[key] = `${row[key]} - ${previewRow[key]}`
-        if (key === 'date' || key === 'dateChecked' || key === 'lastUpdateEt') {
+        if (key === 'date' || key === 'dateChecked' || key === 'lastUpdateEt' || key === 'totalTestResultsSource') {
           return
         }
         if (
